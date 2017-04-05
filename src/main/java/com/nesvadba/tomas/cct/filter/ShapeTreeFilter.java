@@ -19,7 +19,7 @@ public class ShapeTreeFilter extends Filter {
         que.add(shapeTree);
 
         boolean minSelected = true;
-        
+
         ShapeTree onlyNode = null;
 
         while (!que.isEmpty()) {
@@ -28,12 +28,18 @@ public class ShapeTreeFilter extends Filter {
             for (ComponentProperty property : selectedFilters.keySet()) {
 
                 if (selectedFilters.get(property)) {
-                    int propertyVal = node.getProperties().get(property);
+
+                    if (!isAviable(property, node.getProperties(), filterProperties)) {
+                        return new HashSet<>();
+                    }
+                    Integer propValue = node.getProperties().get(property);
+
+                    int propertyVal = propValue.intValue();
 
                     int min = filterProperties.get(getProperty(property, minSelected));
                     int max = filterProperties.get(getProperty(property, !minSelected));
 
-                    tempInRANGE = tempInRANGE & (propertyVal < max && propertyVal > min);
+                    tempInRANGE = tempInRANGE & (propertyVal <= max && propertyVal >= min);
                 }
             }
             if (tempInRANGE) {
@@ -47,13 +53,13 @@ public class ShapeTreeFilter extends Filter {
                 que.addAll(node.getNodes());
             }
         }
-        
+
         if (keepOnlyOne) {
             result = new HashSet<>();
             result.add(onlyNode);
+            System.out.println("ShapeTreeFilter : filterByProperties := " + onlyNode.getProperties()); // TODO LOG REMOVE
         }
         return result;
     }
-
 
 }

@@ -42,7 +42,7 @@ public class CCTEvaluator {
             // Size
             size += node.getProperties().get(ComponentProperty.SIZE);
 
-            // Kontrola subNODU
+            // BB
             temp = node.getProperties().get(ComponentProperty.LEFT);
             if (temp < left) {
                 left = temp;

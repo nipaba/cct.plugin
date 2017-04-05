@@ -34,6 +34,8 @@ public class ShapeTreeGenerator {
         for (CCT cct : ccts) {
             System.out.println(" ------------------------" + cct.getName() + " --------------------------------");
             for (CCT node : cct.getAllNodes()) {
+                
+                long nodeStart = System.currentTimeMillis();
                 counter++;
                 if (counter / 10000 > temp) {
                     System.out.println("Counter :" + temp + " * 10 000 uzlu zpracované");
@@ -50,6 +52,12 @@ public class ShapeTreeGenerator {
                 shapeTree.setImageProcessor(proc);
 
                 shapeQue.add(shapeTree);
+                
+                long duration = System.currentTimeMillis() - nodeStart;
+                if (duration >100){
+                    System.out.println("ShapeTreeGenerator : createShapeTree := " + duration + "/"+  node.getProperties()) ;// TODO LOG REMOVE
+                    
+                }
             }
         }
 
@@ -97,7 +105,7 @@ public class ShapeTreeGenerator {
                     // CHILD
                     if (childSize != parentSize && parentLeft == childLeft && parentUp == childUp && parentDown == childDown && parentRight == childRight) {
                         // DUPLIKACE
-//                        System.out.println((childSize == parentSize) + " " + searchedParent.toString() + ""+node.toString() );
+                        // System.out.println((childSize == parentSize) + " " + searchedParent.toString() + ""+node.toString() );
                         isDuplicate = true;
                     } else {
                         // JSEM MENSI
@@ -115,8 +123,8 @@ public class ShapeTreeGenerator {
             }
 
         }
-        
-//        root.print("");
+
+        // root.print("");
         System.out.println("Counter:" + counter);
         return root;
     }
@@ -143,27 +151,40 @@ public class ShapeTreeGenerator {
     private ShapeTree createShapeThreeNode(ResultsTable rt, int level, CCT node) {
 
         ShapeTree shapeTree = new ShapeTree();
-
+        int size=0;
+        int round, perim, elongation;
+        // System.out.println("XXX" + rt.getColumnHeadings()) ;
         shapeTree.setLevel(level);
         shapeTree.setOrigNode(node);
         Map<ComponentProperty, Integer> props = shapeTree.getProperties();
         int index;
-        
-        props.put(ComponentProperty.LEFT,node.getProperties().get(ComponentProperty.LEFT));
-        props.put(ComponentProperty.RIGHT,node.getProperties().get(ComponentProperty.RIGHT));
-        props.put(ComponentProperty.UP,node.getProperties().get(ComponentProperty.UP));
-        props.put(ComponentProperty.DOWN,node.getProperties().get(ComponentProperty.DOWN));
-        
+
+        props.put(ComponentProperty.LEFT, node.getProperties().get(ComponentProperty.LEFT));
+        props.put(ComponentProperty.RIGHT, node.getProperties().get(ComponentProperty.RIGHT));
+        props.put(ComponentProperty.UP, node.getProperties().get(ComponentProperty.UP));
+        props.put(ComponentProperty.DOWN, node.getProperties().get(ComponentProperty.DOWN));
+
+        props.put(ComponentProperty.INTENSITY, node.getProperties().get(ComponentProperty.INTENSITY));
+
         if ((index = rt.getColumnIndex("Area")) != ResultsTable.COLUMN_NOT_FOUND) {
-            int size = Double.valueOf(rt.getValueAsDouble(index, 0)).intValue();
+            size = Double.valueOf(rt.getValueAsDouble(index, 0)).intValue();
             props.put(ComponentProperty.SIZE, size);
         }
 
         if ((index = rt.getColumnIndex("Round")) != ResultsTable.COLUMN_NOT_FOUND) {
-            int size = Double.valueOf(rt.getValueAsDouble(index, 0) * 1000).intValue();
-            props.put(ComponentProperty.ROUND, size);
+            round = Double.valueOf(rt.getValueAsDouble(index, 0) * 100).intValue();
+            props.put(ComponentProperty.ROUND, round);
         }
 
+        if ((index = rt.getColumnIndex("Perim.")) != ResultsTable.COLUMN_NOT_FOUND) {
+            perim = Double.valueOf(rt.getValueAsDouble(index, 0)).intValue();
+            props.put(ComponentProperty.PERIMETER, perim);
+
+            elongation = (int) (100*perim * perim / (4 * Math.PI * size));
+            
+            props.put(ComponentProperty.ELONGATION, elongation);
+        }
+//        System.out.println(shapeTree);
         return shapeTree;
     }
 

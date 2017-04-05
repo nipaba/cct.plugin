@@ -27,13 +27,16 @@ public class CCTFilter extends Filter {
             CCT node = que.poll();
             boolean tempInRANGE = true;
             for (ComponentProperty property : selectedFilters.keySet()) {
-
                 if (selectedFilters.get(property)) {
-                    int propertyVal = node.getProperties().get(property);
+                    
+                    if (!isAviable(property,node.getProperties(),filterProperties)){
+                        return new HashSet<>();
+                    }
+                    int propertyVal = node.getProperties().get(property).intValue();
                     int min = filterProperties.get(getProperty(property, minSelected));
                     int max = filterProperties.get(getProperty(property, !minSelected));
 
-                    tempInRANGE = tempInRANGE & (propertyVal < max && propertyVal > min);
+                    tempInRANGE = tempInRANGE & (propertyVal <= max && propertyVal >= min);
                 }
             }
             if (tempInRANGE) {
@@ -51,6 +54,8 @@ public class CCTFilter extends Filter {
         if (keepOnlyOne) {
             result = new HashSet<>();
             result.add(onlyNode);
+            
+            System.out.println("CCTFilter : filterByProperties := " + onlyNode.getProperties()); // TODO LOG REMOVE
         }
         return result;
     }

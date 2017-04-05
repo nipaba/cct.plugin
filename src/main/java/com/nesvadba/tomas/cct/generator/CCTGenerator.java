@@ -17,7 +17,7 @@ import com.nesvadba.tomas.cct.enums.PointStatus;
  * @author nipaba
  *
  */
-public  class CCTGenerator {
+public abstract class CCTGenerator {
 
     protected Map<Integer, Queue<Point>> quegeMap = new HashMap<>();
     
@@ -28,21 +28,11 @@ public  class CCTGenerator {
     protected CCT cct = null;
 
     
-    public CCT createCCT(Point[][] points) {
+    public abstract CCT createCCT(Point[][] points);
 
-        System.err.println("CCTGenerator.createCCT : Not Implemented - Use class MinTreeGenerator/MaxTreeGenerator");
-        return null;
-    }
+    abstract void proccess(Point p, int level);
 
-    protected void proccess(Point p, int level) {
-        System.err.println("CCTGenerator.proccess : Not Implemented - Use class MinTreeGenerator/MaxTreeGenerator");
-     
-    }
-
-    protected int flood(int level) {
-        System.err.println("CCTGenerator.flood : Not Implemented - Use class MinTreeGenerator/MaxTreeGenerator");
-        return 0;
-    }
+    abstract int flood(int level);
 
     protected CCT getNode(int level) {
         String key = level + "#" + labels.get(level);
