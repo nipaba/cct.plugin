@@ -47,6 +47,9 @@ public class Painter {
 
             int left = node.getOrigNode().getProperties().get(ComponentProperty.LEFT);
             int up = node.getOrigNode().getProperties().get(ComponentProperty.UP);
+            int down = node.getOrigNode().getProperties().get(ComponentProperty.DOWN);
+            int right = node.getOrigNode().getProperties().get(ComponentProperty.RIGHT);
+
 
             ImageProcessor mask = node.getImageProcessor();
             for (int x = 0; x < mask.getWidth(); x++) {
@@ -57,6 +60,11 @@ public class Painter {
 
                 }
             }
+//            proc.drawLine(down, left, up, left);
+//            proc.drawLine(down, right, up, right);
+//            
+//            proc.drawLine(down, left, down, right);
+//            proc.drawLine(up, left, up, right);
 
             image.repaintWindow();
         }

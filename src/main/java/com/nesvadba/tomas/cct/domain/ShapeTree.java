@@ -14,16 +14,25 @@ import ij.process.ImageProcessor;
 
 public class ShapeTree {
 
-    private int level;
     private int label;
+    private int level;
 
     private Set<Point> points = new HashSet<>();
     private List<ShapeTree> nodes = new ArrayList<>();
-    
+
     private ImageProcessor imageProcessor;
-    
+
     private CCT origNode;
-        
+    private ShapeTree parentNode;
+
+    public ShapeTree getParentNode() {
+        return parentNode;
+    }
+
+    public void setParentNode(ShapeTree parentNode) {
+        this.parentNode = parentNode;
+    }
+
     public CCT getOrigNode() {
         return origNode;
     }
@@ -101,9 +110,9 @@ public class ShapeTree {
     public String toString() {
         return "ShapeTree [level=" + level + ", label=" + label + ", points=" + points + ", nodes=" + nodes + ", properties=" + properties + "]";
     }
-    
+
     public void print(String str) {
-        String msg = str+origNode.getCode() + "$"+properties+"& ->";
+        String msg = str + origNode.getCode() + "$" + properties + "& ->";
         System.out.println(msg);
         if (!nodes.isEmpty()) {
             for (ShapeTree node : nodes) {
@@ -111,7 +120,17 @@ public class ShapeTree {
             }
         }
     }
-    
-    
+
+    public static Comparator<ShapeTree> getInvertComparator() {
+        return new Comparator<ShapeTree>() {
+
+            @Override
+            public int compare(ShapeTree o1, ShapeTree o2) {
+
+                return o1.getProperties().get(ComponentProperty.SIZE) - o2.getProperties().get(ComponentProperty.SIZE);
+
+            }
+        };
+    }
 
 }

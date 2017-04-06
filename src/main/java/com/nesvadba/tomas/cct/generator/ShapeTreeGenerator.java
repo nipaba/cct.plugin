@@ -1,5 +1,7 @@
 package com.nesvadba.tomas.cct.generator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,7 @@ public class ShapeTreeGenerator {
     public ShapeTree createShapeTree(List<CCT> ccts) {
 
         System.out.println("ShapeTreeGenerator - Building Start");
-        PriorityQueue<ShapeTree> shapeQue = new PriorityQueue<ShapeTree>(ShapeTree.getComparator());
+        List<ShapeTree> shapeQue = new ArrayList<>();
         int counter = 0;
         int temp = 0;
         long start = System.currentTimeMillis();
@@ -34,7 +36,7 @@ public class ShapeTreeGenerator {
         for (CCT cct : ccts) {
             System.out.println(" ------------------------" + cct.getName() + " --------------------------------");
             for (CCT node : cct.getAllNodes()) {
-                
+
                 long nodeStart = System.currentTimeMillis();
                 counter++;
                 if (counter / 10000 > temp) {
@@ -49,14 +51,15 @@ public class ShapeTreeGenerator {
 
                 ShapeTree shapeTree = createShapeThreeNode(rt, node.getLevel(), node);
 
+                shapeTree.setLabel(counter);
                 shapeTree.setImageProcessor(proc);
 
                 shapeQue.add(shapeTree);
-                
+
                 long duration = System.currentTimeMillis() - nodeStart;
-                if (duration >100){
-                    System.out.println("ShapeTreeGenerator : createShapeTree := " + duration + "/"+  node.getProperties()) ;// TODO LOG REMOVE
-                    
+                if (duration > 100) {
+                    System.out.println("ShapeTreeGenerator : createShapeTree := " + duration + "/" + node.getProperties());// TODO LOG REMOVE
+
                 }
             }
         }
@@ -64,6 +67,8 @@ public class ShapeTreeGenerator {
         IJ.log("QUE SIZE : " + shapeQue.size());
 
         // Build ShapeTree - size, contains build
+        Collections.sort(shapeQue, ShapeTree.getComparator());
+
         ShapeTree root = buildShapeThree(shapeQue);
         // root.print("");
 
@@ -71,14 +76,14 @@ public class ShapeTreeGenerator {
         return root;
     }
 
-    private ShapeTree buildShapeThree(PriorityQueue<ShapeTree> shapeQue) {
+    private ShapeTree buildShapeThree(List<ShapeTree> shapeQue) {
 
-        ShapeTree root = shapeQue.poll();
+        ShapeTree root = shapeQue.get(0);
         int counter = 1;
-        while (!shapeQue.isEmpty()) {
+        for (int i = 1; i < shapeQue.size(); i++) {
 
-            ShapeTree node = shapeQue.poll();
-
+            ShapeTree node = shapeQue.get(i);
+            // System.out.println("ShapeTreeGenerator : buildShapeThree := " + node.getOrigNode().getProperties().get(ComponentProperty.SIZE)); // TODO LOG REMOVE
             Queue<ShapeTree> tempQue = new LinkedList<>();
             boolean isDuplicate = false;
 
@@ -86,7 +91,7 @@ public class ShapeTreeGenerator {
             int childRight = node.getOrigNode().getProperties().get(ComponentProperty.RIGHT);
             int childUp = node.getOrigNode().getProperties().get(ComponentProperty.UP);
             int childDown = node.getOrigNode().getProperties().get(ComponentProperty.DOWN);
-            int childSize = node.getOrigNode().getProperties().get(ComponentProperty.SIZE);
+            int childSize = node.getProperties().get(ComponentProperty.SIZE);
             ShapeTree parent = root;
 
             tempQue.add(root);
@@ -99,11 +104,13 @@ public class ShapeTreeGenerator {
                 int parentRight = searchedParent.getOrigNode().getProperties().get(ComponentProperty.RIGHT);
                 int parentUp = searchedParent.getOrigNode().getProperties().get(ComponentProperty.UP);
                 int parentDown = searchedParent.getOrigNode().getProperties().get(ComponentProperty.DOWN);
-                int parentSize = searchedParent.getOrigNode().getProperties().get(ComponentProperty.SIZE);
-
+                int parentSize = searchedParent.getProperties().get(ComponentProperty.SIZE);
+//                System.out.println("ShapeTreeGenerator : buildShapeThree := " + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"); // TODO LOG REMOVE
+//                System.out.println("ShapeTreeGenerator : buildShapeThree := " + "PARENT" + searchedParent.getProperties());
+//                System.out.println("ShapeTreeGenerator : buildShapeThree := " + "NODE" + node.getProperties()); // TODO LOG REMOVE
                 if (parentLeft <= childLeft && parentUp <= childUp && parentDown >= childDown && parentRight >= childRight) {
                     // CHILD
-                    if (childSize != parentSize && parentLeft == childLeft && parentUp == childUp && parentDown == childDown && parentRight == childRight) {
+                    if (childSize == parentSize && parentLeft == childLeft && parentUp == childUp && parentDown == childDown && parentRight == childRight) {
                         // DUPLIKACE
                         // System.out.println((childSize == parentSize) + " " + searchedParent.toString() + ""+node.toString() );
                         isDuplicate = true;
@@ -118,6 +125,7 @@ public class ShapeTreeGenerator {
 
             if (!isDuplicate) {
                 parent.getNodes().add(node);
+                node.setParentNode(parent);
                 counter++;
                 // root.print("");
             }
@@ -151,7 +159,7 @@ public class ShapeTreeGenerator {
     private ShapeTree createShapeThreeNode(ResultsTable rt, int level, CCT node) {
 
         ShapeTree shapeTree = new ShapeTree();
-        int size=0;
+        int size = 0;
         int round, perim, elongation;
         // System.out.println("XXX" + rt.getColumnHeadings()) ;
         shapeTree.setLevel(level);
@@ -180,11 +188,11 @@ public class ShapeTreeGenerator {
             perim = Double.valueOf(rt.getValueAsDouble(index, 0)).intValue();
             props.put(ComponentProperty.PERIMETER, perim);
 
-            elongation = (int) (100*perim * perim / (4 * Math.PI * size));
-            
+            elongation = (int) (100 * perim * perim / (4 * Math.PI * size));
+
             props.put(ComponentProperty.ELONGATION, elongation);
         }
-//        System.out.println(shapeTree);
+        // System.out.println(shapeTree);
         return shapeTree;
     }
 

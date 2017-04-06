@@ -10,10 +10,11 @@ public class MainRunner {
  
         
 //       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\_nak.tif");
-       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\medium.tif");
+//       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\medium.tif");
 //       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\small.tif");
 //        ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\pokus2.tif");
 //        ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\big.tif");
+       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\dubled.tif");
        img.show();
        
        CCT_PluginFrame frame = new CCT_PluginFrame();

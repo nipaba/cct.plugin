@@ -1,7 +1,10 @@
 package com.nesvadba.tomas.cct.filter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -12,9 +15,9 @@ import com.nesvadba.tomas.cct.enums.FilterProps;
 
 public class ShapeTreeFilter extends Filter {
 
-    public static Set<ShapeTree> filterByProperties(ShapeTree shapeTree, Map<FilterProps, Integer> filterProperties, Map<ComponentProperty, Boolean> selectedFilters, boolean keepOnlyOne) {
+    public static List<ShapeTree> filterByProperties(ShapeTree shapeTree, Map<FilterProps, Integer> filterProperties, Map<ComponentProperty, Boolean> selectedFilters, boolean keepOnlyOne) {
 
-        Set<ShapeTree> result = new HashSet<>();
+        List<ShapeTree> result = new ArrayList<>();
         Queue<ShapeTree> que = new LinkedList<>();
         que.add(shapeTree);
 
@@ -30,7 +33,7 @@ public class ShapeTreeFilter extends Filter {
                 if (selectedFilters.get(property)) {
 
                     if (!isAviable(property, node.getProperties(), filterProperties)) {
-                        return new HashSet<>();
+                        return new ArrayList<>();
                     }
                     Integer propValue = node.getProperties().get(property);
 
@@ -43,6 +46,7 @@ public class ShapeTreeFilter extends Filter {
                 }
             }
             if (tempInRANGE) {
+//                System.out.println("ShapeTreeFilter : filterByProperties := " + node); // TODO LOG REMOVE
                 result.add(node);
                 if (onlyNode == null) {
                     onlyNode = node;
@@ -55,10 +59,24 @@ public class ShapeTreeFilter extends Filter {
         }
 
         if (keepOnlyOne) {
-            result = new HashSet<>();
+            result = new ArrayList<>();
             result.add(onlyNode);
             System.out.println("ShapeTreeFilter : filterByProperties := " + onlyNode.getProperties()); // TODO LOG REMOVE
+        }else {
+            System.out.println("----------------------------------------------------------------------------------------------------------------------------------"); // TODO LOG REMOVE
+            for (ShapeTree aa : result){
+                System.out.println("ShapeTreeFilter : filterByProperties := CHILD " + aa.getProperties());
+                ShapeTree par = aa.getParentNode();
+                while (par!=null){
+                    System.out.println("ShapeTreeFilter : filterByProperties := " + par.getLabel() + par.getProperties()); // TODO LOG REMOVE
+                    par = par.getParentNode();
+                }
+                // TODO LOG REMOVE
+            }
         }
+        
+//        Collections.sort(result,ShapeTree.getInvertComparator());
+        Collections.sort(result,ShapeTree.getComparator());
         return result;
     }
 

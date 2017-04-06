@@ -750,7 +750,8 @@ public class CCT_PluginFrame extends PlugInFrame {
 
     private void filterImage() {
         
-        System.out.println("Selected filters " + selectedFilters + " only Component : " + keepOnlyOne);
+        System.out.println("CCT_PluginFrame : filterImage :=  Selected filters " + selectedFilters + " only Component : " + keepOnlyOne ); // TODO LOG REMOVE
+        System.out.println("CCT_PluginFrame : filterImage := " + filterProperties ); // TODO LOG REMOVE
         if (radioShapeThree.isSelected()) {
             painter.filterShapeTreeImage(shapeTree, filterProperties, selectedFilters, keepOnlyOne);
         } else {
