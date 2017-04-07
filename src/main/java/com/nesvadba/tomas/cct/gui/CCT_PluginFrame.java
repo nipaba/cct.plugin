@@ -762,9 +762,9 @@ public class CCT_PluginFrame extends PlugInFrame {
     private void searchFor(double minX, double minY, double maxX, double maxY) {
 
         filterProperties.put(FilterProps.LEFT, Double.valueOf(minY).intValue());
-        filterProperties.put(FilterProps.RIGHT, Double.valueOf(maxY).intValue());
+        filterProperties.put(FilterProps.RIGHT, Double.valueOf(maxY).intValue()-1);
         filterProperties.put(FilterProps.UP, Double.valueOf(minX).intValue());
-        filterProperties.put(FilterProps.BOTTOM, Double.valueOf(maxX).intValue());
+        filterProperties.put(FilterProps.BOTTOM, Double.valueOf(maxX).intValue()-1);
 
         filterProperties.put(FilterProps.MAX, Integer.MAX_VALUE);
         filterProperties.put(FilterProps.MIN, Integer.MIN_VALUE);

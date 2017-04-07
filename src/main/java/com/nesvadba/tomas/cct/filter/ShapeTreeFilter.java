@@ -61,14 +61,14 @@ public class ShapeTreeFilter extends Filter {
         if (keepOnlyOne) {
             result = new ArrayList<>();
             result.add(onlyNode);
-            System.out.println("ShapeTreeFilter : filterByProperties := " + onlyNode.getProperties()); // TODO LOG REMOVE
+//            System.out.println("ShapeTreeFilter : filterByProperties := " + onlyNode.getProperties()); // TODO LOG REMOVE
         }else {
-            System.out.println("----------------------------------------------------------------------------------------------------------------------------------"); // TODO LOG REMOVE
+//            System.out.println("----------------------------------------------------------------------------------------------------------------------------------"); // TODO LOG REMOVE
             for (ShapeTree aa : result){
-                System.out.println("ShapeTreeFilter : filterByProperties := CHILD " + aa.getProperties());
+//                System.out.println("ShapeTreeFilter : filterByProperties := CHILD " + aa.getProperties() + aa.getLabel()  + aa.getOrigNode().getAllPoints());
                 ShapeTree par = aa.getParentNode();
                 while (par!=null){
-                    System.out.println("ShapeTreeFilter : filterByProperties := " + par.getLabel() + par.getProperties()); // TODO LOG REMOVE
+//                    System.out.println("ShapeTreeFilter : filterByProperties := " + par.getLabel() + par.getProperties()); // TODO LOG REMOVE
                     par = par.getParentNode();
                 }
                 // TODO LOG REMOVE

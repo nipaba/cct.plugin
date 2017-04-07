@@ -36,7 +36,7 @@ public class CCTFilter extends Filter {
                     int min = filterProperties.get(getProperty(property, minSelected));
                     int max = filterProperties.get(getProperty(property, !minSelected));
 
-                    tempInRANGE = tempInRANGE & (propertyVal <= max && propertyVal >= min);
+                    tempInRANGE = tempInRANGE & (propertyVal < max && propertyVal > min);
                 }
             }
             if (tempInRANGE) {
