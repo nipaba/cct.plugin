@@ -16,6 +16,7 @@ import com.nesvadba.tomas.cct.domain.ShapeTree;
 import com.nesvadba.tomas.cct.enums.ComponentProperty;
 
 import ij.IJ;
+import ij.IJEventListener;
 import ij.ImagePlus;
 import ij.gui.NewImage;
 import ij.measure.Measurements;
@@ -25,220 +26,197 @@ import ij.process.ImageProcessor;
 
 public class ShapeTreeGenerator {
 
-	private static final int BORDER = 1;
+    private static final int BORDER = 1;
 
-	public ShapeTree createShapeTree(List<CCT> ccts) {
+    public ShapeTree createShapeTree(List<CCT> ccts) {
 
-		System.out.println("ShapeTreeGenerator - Building Start");
-		List<ShapeTree> shapeQue = new ArrayList<>();
-		int counter = 0;
-		int temp = 0;
-		long start = System.currentTimeMillis();
+        System.out.println("ShapeTreeGenerator - Building Start");
+        List<ShapeTree> shapeQue = new ArrayList<>();
+        int counter = 0;
+        int temp = 0;
+        long start = System.currentTimeMillis();
 
-		for (CCT cct : ccts) {
-			System.out.println(" ------------------------" + cct.getName() + " --------------------------------");
-			for (CCT node : cct.getAllNodes()) {
+        for (CCT cct : ccts) {
+            System.out.println(" ------------------------" + cct.getName() + " --------------------------------");
+            for (CCT node : cct.getAllNodes()) {
 
-				long nodeStart = System.currentTimeMillis();
-				counter++;
-				if (counter / 10000 > temp) {
-					System.out.println("Counter :" + temp + " * 10 000 uzlu zpracované");
-					temp = counter / 10000;
-				}
-				ImageProcessor proc = Convertor.createBorderedImage(node, BORDER);
+                long nodeStart = System.currentTimeMillis();
+                counter++;
+                if (counter / 10000 > temp) {
+                    System.out.println("Counter :" + temp + " * 10 000 uzlu zpracované");
+                    temp = counter / 10000;
+                }
+                ImageProcessor proc = Convertor.createBorderedImage(node, BORDER);
 
-				Filling.fill(proc, 0, 255);
-				ResultsTable rt = getStats(proc);
+                Filling.fill(proc, 0, 255);
+                ResultsTable rt = getStats(proc);
 
-				ShapeTree shapeTree = createShapeThreeNode(rt, node.getLevel(), node);
+                ShapeTree shapeTree = createShapeThreeNode(rt, node.getLevel(), node);
 
-				shapeTree.setLabel(counter);
-				shapeTree.setImageProcessor(proc);
+                shapeTree.setLabel(counter);
+                shapeTree.setImageProcessor(proc);
 
-				shapeQue.add(shapeTree);
+                shapeQue.add(shapeTree);
 
-				long duration = System.currentTimeMillis() - nodeStart;
-				if (duration > 100) {
-					System.out.println(
-							"ShapeTreeGenerator : createShapeTree := " + duration + "/" + node.getProperties());// TODO
-																												// LOG
-																												// REMOVE
+                long duration = System.currentTimeMillis() - nodeStart;
+                if (duration > 100) {
+                    System.out.println("ShapeTreeGenerator : createShapeTree := " + duration + "/" + node.getProperties());// TODO
+                                                                                                                           // LOG
+                                                                                                                           // REMOVE
 
-				}
-			}
-		}
+                }
+            }
+        }
 
-		IJ.log("QUE SIZE : " + shapeQue.size());
+        IJ.log("QUE SIZE : " + shapeQue.size());
 
-		// Build ShapeTree - size, contains build
-		Collections.sort(shapeQue, ShapeTree.getComparator());
+        // Build ShapeTree - size, contains build
+        Collections.sort(shapeQue, ShapeTree.getComparator());
 
-		ShapeTree root = buildShapeThree(shapeQue);
-		// root.print("");
+        ShapeTree root = buildShapeThree(shapeQue);
 
-		System.out.println("ShapeTreeGenerator - Building finish with time :" + (System.currentTimeMillis() - start));
-		return root;
-	}
+        root.evalTreeAvgIntensity();
+        // root.print("");
 
-	private ShapeTree buildShapeThree(List<ShapeTree> shapeQue) {
+        System.out.println("ShapeTreeGenerator - Building finish with time :" + (System.currentTimeMillis() - start));
+        return root;
+    }
 
-		ShapeTree root = shapeQue.get(0);
-		int counter = 1;
-		for (int i = 1; i < shapeQue.size(); i++) {
+    private ShapeTree buildShapeThree(List<ShapeTree> shapeQue) {
+        long start = System.currentTimeMillis();
+        IJ.log("Building shapeTree from Que");
 
-			ShapeTree node = shapeQue.get(i);
-			// System.out.println("ShapeTreeGenerator : buildShapeThree := " +
-			// node.getOrigNode().getProperties().get(ComponentProperty.SIZE));
-			// // TODO LOG REMOVE
-			Queue<ShapeTree> tempQue = new LinkedList<>();
-			boolean isDuplicate = false;
+        ShapeTree root = shapeQue.get(0);
+        int counter = 1;
+        for (int i = 1; i < shapeQue.size(); i++) {
 
-			int childLeft = node.getProperties().get(ComponentProperty.LEFT);
-			int childRight = node.getProperties().get(ComponentProperty.RIGHT);
-			int childUp = node.getProperties().get(ComponentProperty.UP);
-			int childDown = node.getProperties().get(ComponentProperty.DOWN);
-			int childSize = node.getProperties().get(ComponentProperty.SIZE);
-			ShapeTree parent = root;
+            ShapeTree node = shapeQue.get(i);
+            // System.out.println("ShapeTreeGenerator : buildShapeThree := " +
+            // node.getOrigNode().getProperties().get(ComponentProperty.SIZE));
+            // // TODO LOG REMOVE
+            Queue<ShapeTree> tempQue = new LinkedList<>();
+            boolean isDuplicate = false;
 
-			tempQue.add(root);
+            int childLeft = node.getProperties().get(ComponentProperty.LEFT);
+            int childRight = node.getProperties().get(ComponentProperty.RIGHT);
+            int childUp = node.getProperties().get(ComponentProperty.UP);
+            int childDown = node.getProperties().get(ComponentProperty.DOWN);
+            int childSize = node.getProperties().get(ComponentProperty.SIZE);
+            ShapeTree parent = root;
 
-			while (!tempQue.isEmpty()) {
+            tempQue.add(root);
 
-				ShapeTree searchedParent = tempQue.poll();
+            while (!tempQue.isEmpty()) {
 
-				int parentLeft = searchedParent.getProperties().get(ComponentProperty.LEFT);
-				int parentRight = searchedParent.getProperties().get(ComponentProperty.RIGHT);
-				int parentUp = searchedParent.getProperties().get(ComponentProperty.UP);
-				int parentDown = searchedParent.getProperties().get(ComponentProperty.DOWN);
-				int parentSize = searchedParent.getProperties().get(ComponentProperty.SIZE);
-				// System.out.println("ShapeTreeGenerator : buildShapeThree := "
-				// + "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"); // TODO LOG
-				// REMOVE
-				// System.out.println("ShapeTreeGenerator : buildShapeThree := "
-				// + "PARENT" + searchedParent.getProperties());
-				// System.out.println("ShapeTreeGenerator : buildShapeThree := "
-				// + "NODE" + node.getProperties()); // TODO LOG REMOVE
-				if (parentLeft <= childLeft && parentUp <= childUp && parentDown >= childDown
-						&& parentRight >= childRight && isPointInParent(searchedParent,node)) {
-					// CHILD
-					if (childSize == parentSize && parentLeft == childLeft && parentUp == childUp
-							&& parentDown == childDown && parentRight == childRight) {
-						// DUPLIKACE
-						// System.out.println((childSize == parentSize) + " " +
-						// searchedParent.toString() + ""+node.toString() );
-						isDuplicate = true;
-					}
-					// NADA jiny BB
+                ShapeTree searchedParent = tempQue.poll();
 
-					else {
-						// JSEM MENSI
-						parent = searchedParent;
-						tempQue.clear();
-						tempQue.addAll(searchedParent.getNodes());
-					}
-				}
-			}
+                int parentLeft = searchedParent.getProperties().get(ComponentProperty.LEFT);
+                int parentRight = searchedParent.getProperties().get(ComponentProperty.RIGHT);
+                int parentUp = searchedParent.getProperties().get(ComponentProperty.UP);
+                int parentDown = searchedParent.getProperties().get(ComponentProperty.DOWN);
+                int parentSize = searchedParent.getProperties().get(ComponentProperty.SIZE);
 
-			if (!isDuplicate) {
-				parent.getNodes().add(node);
-				node.setParentNode(parent);
-				counter++;
-				// root.print("");
-			}
+                if (parentLeft <= childLeft && parentUp <= childUp && parentDown >= childDown && parentRight >= childRight && isPointInParent(searchedParent, node)) {
+                    // CHILD
+                    if (childSize == parentSize && parentLeft == childLeft && parentUp == childUp && parentDown == childDown && parentRight == childRight) {
+                        // DUPLIKACE
+                        isDuplicate = true;
+                    }
+                    // NADA jiny BB
 
-		}
+                    else {
+                        // JSEM MENSI
+                        parent = searchedParent;
+                        tempQue.clear();
+                        tempQue.addAll(searchedParent.getNodes());
+                    }
+                }
+            }
 
-		// root.print("");
-		System.out.println("Counter:" + counter);
-		return root;
-	}
+            if (!isDuplicate) {
+                parent.getNodes().add(node);
+                node.setParentNode(parent);
+                counter++;
+                // root.print("");
+            }
 
-	ImagePlus a, b;
+        }
 
-	private boolean isPointInParent(ShapeTree parent, ShapeTree node) {
+        IJ.log("Building shapeTree from Que nodes[" + counter + "],time [" + (System.currentTimeMillis() - start) + "]");
+        System.out.println("Counter:" + counter);
+        return root;
+    }
 
-		for (Point p : node.getOrigNode().getPoints()) {
-			int left = parent.getProperties().get(ComponentProperty.LEFT);
-			int up = parent.getProperties().get(ComponentProperty.UP);
+    private boolean isPointInParent(ShapeTree parent, ShapeTree node) {
 
-			int parentVal = parent.getImageProcessor().get(p.y - up + 1, p.x - left + 1);
-			if (parentVal > 127) {
-				System.err.println(parent.getProperties());
-				System.out.println((p.y - up + 1)+ "|" + ( p.x - left + 1));
-			}
-			try {
-				return parentVal < 127;
-			} catch (ArrayIndexOutOfBoundsException e) {
-				// TODO TNE - LOG REMOVE
-				IJ.log("com.nesvadba.tomas.cct.generator + ShapeTreeGenerator + isPointInParent||=="
-						+ parent.getProperties());
-				// TODO TNE - LOG REMOVE
-				IJ.log("com.nesvadba.tomas.cct.generator + ShapeTreeGenerator + isPointInParent||==" + p + ""
-						+ (p.y - up + 1) + "|" + (p.x - left + 1));
-				throw e;
-			}
-		}
+        for (Point p : node.getOrigNode().getPoints()) {
+            int left = parent.getProperties().get(ComponentProperty.LEFT);
+            int up = parent.getProperties().get(ComponentProperty.UP);
 
-		return false;
-	}
+            int parentVal = parent.getImageProcessor().get(p.y - up + 1, p.x - left + 1);
+            return parentVal < 127;
+        }
 
-	private ResultsTable getStats(ImageProcessor proc) {
-		int options = ParticleAnalyzer.SHOW_PROGRESS;
-		int measurements = Measurements.ALL_STATS;
-		int minSize = 1;
-		int maxSize = Integer.MAX_VALUE;
-		ResultsTable rt = new ResultsTable();
-		ParticleAnalyzer pa = new ParticleAnalyzer(options, measurements, rt, minSize, maxSize);
-		pa.analyze(new ImagePlus("", proc));
+        return false;
+    }
 
-		StringBuilder str = new StringBuilder();
-		for (int i = 0; i <= rt.getLastColumn(); i++) {
-			if (rt.columnExists(i)) {
-				str.append(rt.getColumnHeading(i) + ":" + rt.getValueAsDouble(i, 0) + ",");
-			}
-		}
+    private ResultsTable getStats(ImageProcessor proc) {
+        int options = ParticleAnalyzer.SHOW_PROGRESS;
+        int measurements = Measurements.ALL_STATS;
+        int minSize = 1;
+        int maxSize = Integer.MAX_VALUE;
+        ResultsTable rt = new ResultsTable();
+        ParticleAnalyzer pa = new ParticleAnalyzer(options, measurements, rt, minSize, maxSize);
+        pa.analyze(new ImagePlus("", proc));
 
-		return rt;
-	}
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i <= rt.getLastColumn(); i++) {
+            if (rt.columnExists(i)) {
+                str.append(rt.getColumnHeading(i) + ":" + rt.getValueAsDouble(i, 0) + ",");
+            }
+        }
 
-	private ShapeTree createShapeThreeNode(ResultsTable rt, int level, CCT node) {
+        return rt;
+    }
 
-		ShapeTree shapeTree = new ShapeTree();
-		int size = 0;
-		int round, perim, elongation;
-		// System.out.println("XXX" + rt.getColumnHeadings()) ;
-		shapeTree.setLevel(level);
-		shapeTree.setOrigNode(node);
-		Map<ComponentProperty, Integer> props = shapeTree.getProperties();
-		int index;
+    private ShapeTree createShapeThreeNode(ResultsTable rt, int level, CCT node) {
 
-		props.put(ComponentProperty.LEFT, node.getProperties().get(ComponentProperty.LEFT));
-		props.put(ComponentProperty.RIGHT, node.getProperties().get(ComponentProperty.RIGHT));
-		props.put(ComponentProperty.UP, node.getProperties().get(ComponentProperty.UP));
-		props.put(ComponentProperty.DOWN, node.getProperties().get(ComponentProperty.DOWN));
+        ShapeTree shapeTree = new ShapeTree();
+        int size = 0;
+        int round, perim, elongation;
+        // System.out.println("XXX" + rt.getColumnHeadings()) ;
+        shapeTree.setLevel(level);
+        shapeTree.setOrigNode(node);
+        Map<ComponentProperty, Integer> props = shapeTree.getProperties();
+        int index;
 
-		props.put(ComponentProperty.INTENSITY, node.getProperties().get(ComponentProperty.INTENSITY));
+        props.put(ComponentProperty.LEFT, node.getProperties().get(ComponentProperty.LEFT));
+        props.put(ComponentProperty.RIGHT, node.getProperties().get(ComponentProperty.RIGHT));
+        props.put(ComponentProperty.UP, node.getProperties().get(ComponentProperty.UP));
+        props.put(ComponentProperty.DOWN, node.getProperties().get(ComponentProperty.DOWN));
 
-		if ((index = rt.getColumnIndex("Area")) != ResultsTable.COLUMN_NOT_FOUND) {
-			size = Double.valueOf(rt.getValueAsDouble(index, 0)).intValue();
-			props.put(ComponentProperty.SIZE, size);
-		}
+        props.put(ComponentProperty.INTENSITY, node.getProperties().get(ComponentProperty.INTENSITY));
 
-		if ((index = rt.getColumnIndex("Round")) != ResultsTable.COLUMN_NOT_FOUND) {
-			round = Double.valueOf(rt.getValueAsDouble(index, 0) * 100).intValue();
-			props.put(ComponentProperty.ROUND, round);
-		}
+        if ((index = rt.getColumnIndex("Area")) != ResultsTable.COLUMN_NOT_FOUND) {
+            size = Double.valueOf(rt.getValueAsDouble(index, 0)).intValue();
+            props.put(ComponentProperty.SIZE, size);
+        }
 
-		if ((index = rt.getColumnIndex("Perim.")) != ResultsTable.COLUMN_NOT_FOUND) {
-			perim = Double.valueOf(rt.getValueAsDouble(index, 0)).intValue();
-			props.put(ComponentProperty.PERIMETER, perim);
+        if ((index = rt.getColumnIndex("Round")) != ResultsTable.COLUMN_NOT_FOUND) {
+            round = Double.valueOf(rt.getValueAsDouble(index, 0) * 100).intValue();
+            props.put(ComponentProperty.ROUND, round);
+        }
 
-			elongation = (int) (100 * perim * perim / (4 * Math.PI * size));
+        if ((index = rt.getColumnIndex("Perim.")) != ResultsTable.COLUMN_NOT_FOUND) {
+            perim = Double.valueOf(rt.getValueAsDouble(index, 0)).intValue();
+            props.put(ComponentProperty.PERIMETER, perim);
 
-			props.put(ComponentProperty.ELONGATION, elongation);
-		}
-		// System.out.println(shapeTree);
-		return shapeTree;
-	}
+            elongation = (int) (100 * perim * perim / (4 * Math.PI * size));
+
+            props.put(ComponentProperty.ELONGATION, elongation);
+        }
+        // System.out.println(shapeTree);
+        return shapeTree;
+    }
 
 }

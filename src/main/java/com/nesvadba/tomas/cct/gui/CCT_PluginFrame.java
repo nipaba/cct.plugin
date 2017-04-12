@@ -109,6 +109,8 @@ public class CCT_PluginFrame extends PlugInFrame {
         radioShapeThree = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
         keepOnlyOneCheckBox = new javax.swing.JCheckBox();
+        jButton2 = new javax.swing.JButton();
+        jSlider1 = new javax.swing.JSlider();
 
         setBackground(java.awt.Color.lightGray);
         setForeground(java.awt.Color.lightGray);
@@ -445,6 +447,7 @@ public class CCT_PluginFrame extends PlugInFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 20;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(radioMinTree, gridBagConstraints);
 
@@ -459,6 +462,7 @@ public class CCT_PluginFrame extends PlugInFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 21;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(radioMaxTree, gridBagConstraints);
 
@@ -472,17 +476,19 @@ public class CCT_PluginFrame extends PlugInFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 22;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(radioShapeThree, gridBagConstraints);
 
         jButton1.setText("Nápověda");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridy = 28;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jButton1, gridBagConstraints);
 
         keepOnlyOneCheckBox.setText("Selection Only");
+        keepOnlyOneCheckBox.setActionCommand("Single komponent");
         keepOnlyOneCheckBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 keepOnlyOneCheckBoxStateChanged(evt);
@@ -491,8 +497,30 @@ public class CCT_PluginFrame extends PlugInFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         add(keepOnlyOneCheckBox, gridBagConstraints);
+
+        jButton2.setText("Search Similar");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 25;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        add(jButton2, gridBagConstraints);
+
+        jSlider1.setMajorTickSpacing(10);
+        jSlider1.setMinimum(5);
+        jSlider1.setMinorTickSpacing(5);
+        jSlider1.setPaintLabels(true);
+        jSlider1.setPaintTicks(true);
+        jSlider1.setSnapToTicks(true);
+        jSlider1.setToolTipText("");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 25;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        add(jSlider1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -632,10 +660,12 @@ public class CCT_PluginFrame extends PlugInFrame {
     private javax.swing.JButton initImgBtn;
     private javax.swing.JCheckBox intensityCheck;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JSlider jSlider1;
     private javax.swing.JCheckBox keepOnlyOneCheckBox;
     private javax.swing.JSpinner maxEnlongSpinner;
     private javax.swing.JSpinner maxHeightSpinner;
@@ -750,8 +780,6 @@ public class CCT_PluginFrame extends PlugInFrame {
 
     private void filterImage() {
         
-        System.out.println("CCT_PluginFrame : filterImage :=  Selected filters " + selectedFilters + " only Component : " + keepOnlyOne ); // TODO LOG REMOVE
-        System.out.println("CCT_PluginFrame : filterImage := " + filterProperties ); // TODO LOG REMOVE
         if (radioShapeThree.isSelected()) {
             painter.filterShapeTreeImage(shapeTree, filterProperties, selectedFilters, keepOnlyOne);
         } else {

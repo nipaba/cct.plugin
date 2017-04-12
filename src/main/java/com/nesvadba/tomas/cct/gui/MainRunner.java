@@ -10,14 +10,14 @@ public class MainRunner {
  
         
 //       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\_nak.tif");
-//       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\medium.tif");
+       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\medium.tif");
 //       ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\small.tif");
 //        ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\pokus2.tif");
 //        ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\big.tif");
 //        ImagePlus img = IJ.openImage("C:\\Users\\nipaba\\Documents\\img\\NAK\\dubled.tif");
     	
     	
-     ImagePlus img = IJ.openImage("D:\\img\\NAK\\medium.tif");
+//     ImagePlus img = IJ.openImage("D:\\img\\NAK\\medium.tif");
 //     ImagePlus img = IJ.openImage("D:\\img\\NAK\\smaller.tif");
 //     ImagePlus img = IJ.openImage("D:\\img\\NAK\\mini.tif");
 //     ImagePlus img = IJ.openImage("D:\\img\\NAK\\micro.tif");

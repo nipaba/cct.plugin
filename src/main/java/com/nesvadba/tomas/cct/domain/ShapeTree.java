@@ -132,5 +132,23 @@ public class ShapeTree {
             }
         };
     }
+    
+    public void evalTreeAvgIntensity() {
+
+        long intensitySum = 0;
+        long subSize = 0;
+
+        for (ShapeTree node : nodes) {
+            node.evalTreeAvgIntensity();
+            intensitySum += node.getProperties().get(ComponentProperty.SIZE) * node.getProperties().get(ComponentProperty.AVG_INTENSITY);
+            subSize += node.getProperties().get(ComponentProperty.SIZE);
+        }
+        
+        int size = properties.get(ComponentProperty.SIZE);
+        int intensity = properties.get(ComponentProperty.INTENSITY);
+        int avgIntensity = (int)((size - subSize) * intensity + intensitySum)/size;
+        properties.put(ComponentProperty.AVG_INTENSITY, avgIntensity);
+
+    }
 
 }
