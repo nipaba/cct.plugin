@@ -60,9 +60,7 @@ public class ShapeTreeGenerator {
 
                 long duration = System.currentTimeMillis() - nodeStart;
                 if (duration > 100) {
-                    System.out.println("ShapeTreeGenerator : createShapeTree := " + duration + "/" + node.getProperties());// TODO
-                                                                                                                           // LOG
-                                                                                                                           // REMOVE
+                    System.out.println("ShapeTreeGenerator : createShapeTree := " + duration + "/" + node.getProperties());
 
                 }
             }
@@ -70,13 +68,11 @@ public class ShapeTreeGenerator {
 
         IJ.log("QUE SIZE : " + shapeQue.size());
 
-        // Build ShapeTree - size, contains build
         Collections.sort(shapeQue, ShapeTree.getComparator());
 
         ShapeTree root = buildShapeThree(shapeQue);
 
         root.evalTreeAvgIntensity();
-        // root.print("");
 
         System.out.println("ShapeTreeGenerator - Building finish with time :" + (System.currentTimeMillis() - start));
         return root;
@@ -91,9 +87,7 @@ public class ShapeTreeGenerator {
         for (int i = 1; i < shapeQue.size(); i++) {
 
             ShapeTree node = shapeQue.get(i);
-            // System.out.println("ShapeTreeGenerator : buildShapeThree := " +
-            // node.getOrigNode().getProperties().get(ComponentProperty.SIZE));
-            // // TODO LOG REMOVE
+
             Queue<ShapeTree> tempQue = new LinkedList<>();
             boolean isDuplicate = false;
 
@@ -135,7 +129,6 @@ public class ShapeTreeGenerator {
 
             if (!isDuplicate) {
                 parent.getNodes().add(node);
-                node.setParentNode(parent);
                 counter++;
                 // root.print("");
             }
@@ -184,7 +177,7 @@ public class ShapeTreeGenerator {
         ShapeTree shapeTree = new ShapeTree();
         int size = 0;
         int round, perim, elongation;
-        // System.out.println("XXX" + rt.getColumnHeadings()) ;
+
         shapeTree.setLevel(level);
         shapeTree.setOrigNode(node);
         Map<ComponentProperty, Integer> props = shapeTree.getProperties();

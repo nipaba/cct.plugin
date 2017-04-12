@@ -23,15 +23,6 @@ public class ShapeTree {
     private ImageProcessor imageProcessor;
 
     private CCT origNode;
-    private ShapeTree parentNode;
-
-    public ShapeTree getParentNode() {
-        return parentNode;
-    }
-
-    public void setParentNode(ShapeTree parentNode) {
-        this.parentNode = parentNode;
-    }
 
     public CCT getOrigNode() {
         return origNode;

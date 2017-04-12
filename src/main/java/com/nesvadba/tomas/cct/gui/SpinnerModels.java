@@ -11,8 +11,10 @@ public class SpinnerModels {
 
     private SpinnerNumberModel minSizeSM = new SpinnerNumberModel();
     private SpinnerNumberModel maxSizeSM = new SpinnerNumberModel();
+
     private SpinnerNumberModel minHeightSM = new SpinnerNumberModel();
     private SpinnerNumberModel maxHeightSM = new SpinnerNumberModel();
+
     private SpinnerNumberModel minIntensitySM = new SpinnerNumberModel();
     private SpinnerNumberModel maxIntensitySM = new SpinnerNumberModel();
 
@@ -21,6 +23,9 @@ public class SpinnerModels {
 
     private SpinnerNumberModel minRoundSM = new SpinnerNumberModel();
     private SpinnerNumberModel maxRoundSM = new SpinnerNumberModel();
+
+    private SpinnerNumberModel minAvgIntSM = new SpinnerNumberModel();
+    private SpinnerNumberModel maxAvgIntSM = new SpinnerNumberModel();
 
     // SIZE MODELS
     public void initSizeSM(JSpinner minSpinner, JSpinner maxSpinner, Map<FilterProps, Integer> filterProperties) {
@@ -80,7 +85,7 @@ public class SpinnerModels {
         minElongationSM.setMinimum(0);
         minElongationSM.setMaximum(999999999);
         minElongationSM.setValue(100);
-        
+
         filterProperties.put(FilterProps.ELONGATION_MIN, 100);
         minSpinner.setModel(minElongationSM);
 
@@ -106,6 +111,23 @@ public class SpinnerModels {
         maxRoundSM.setValue(100);
         filterProperties.put(FilterProps.ROUND_MAX, 100);
         maxSpinner.setModel(maxRoundSM);
+
+    }
+
+    public void initAvgIntSM(JSpinner minSpinner, JSpinner maxSpinner, Map<FilterProps, Integer> filterProperties) {
+        minAvgIntSM.setMinimum(0);
+        minAvgIntSM.setMaximum(255);
+        minAvgIntSM.setValue(127);
+        minAvgIntSM.setStepSize(5);
+        filterProperties.put(FilterProps.AVG_INT_MIN, 0);
+        minSpinner.setModel(minAvgIntSM);
+
+        maxAvgIntSM.setMinimum(0);
+        maxAvgIntSM.setMaximum(255);
+        maxAvgIntSM.setValue(255);
+        maxAvgIntSM.setStepSize(5);
+        filterProperties.put(FilterProps.AVG_INT_MAX, 255);
+        maxSpinner.setModel(maxAvgIntSM);
 
     }
 
@@ -191,6 +213,22 @@ public class SpinnerModels {
 
     public void setMaxIntensitySM(SpinnerNumberModel maxIntensitySM) {
         this.maxIntensitySM = maxIntensitySM;
+    }
+
+    public SpinnerNumberModel getMinAvgIntSM() {
+        return minAvgIntSM;
+    }
+
+    public void setMinAvgIntSM(SpinnerNumberModel minAvgIntSM) {
+        this.minAvgIntSM = minAvgIntSM;
+    }
+
+    public SpinnerNumberModel getMaxAvgIntSM() {
+        return maxAvgIntSM;
+    }
+
+    public void setMaxAvgIntSM(SpinnerNumberModel maxAvgIntSM) {
+        this.maxAvgIntSM = maxAvgIntSM;
     }
 
 }

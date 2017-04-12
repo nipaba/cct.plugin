@@ -7,7 +7,6 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.nesvadba.tomas.cct.domain.CCT;
-import com.nesvadba.tomas.cct.domain.ShapeTree;
 import com.nesvadba.tomas.cct.enums.ComponentProperty;
 import com.nesvadba.tomas.cct.enums.FilterProps;
 
@@ -28,8 +27,8 @@ public class CCTFilter extends Filter {
             boolean tempInRANGE = true;
             for (ComponentProperty property : selectedFilters.keySet()) {
                 if (selectedFilters.get(property)) {
-                    
-                    if (!isAviable(property,node.getProperties(),filterProperties)){
+
+                    if (!isAviable(property, node.getProperties(), filterProperties)) {
                         return new HashSet<>();
                     }
                     int propertyVal = node.getProperties().get(property).intValue();
@@ -54,8 +53,8 @@ public class CCTFilter extends Filter {
         if (keepOnlyOne) {
             result = new HashSet<>();
             result.add(onlyNode);
-            
-            System.out.println("CCTFilter : filterByProperties := " + onlyNode.getProperties()); // TODO LOG REMOVE
+
+            System.out.println("CCTFilter : filterByProperties := " + onlyNode.getProperties());
         }
         return result;
     }

@@ -7,6 +7,8 @@ import com.nesvadba.tomas.cct.enums.FilterProps;
 
 public class Filter {
 
+    
+    
     protected static FilterProps getProperty(ComponentProperty property, boolean isMinSelected) {
         switch (property) {
             case SIZE :
@@ -29,9 +31,14 @@ public class Filter {
                 return (isMinSelected) ? FilterProps.UP : FilterProps.MAX;
             case DOWN :
                 return (isMinSelected) ? FilterProps.MIN : FilterProps.BOTTOM;
+                
+            case AVG_INTENSITY : 
+                return (isMinSelected) ? FilterProps.AVG_INT_MIN : FilterProps.AVG_INT_MAX;
             default :
                 break;
         }
+        
+        System.err.println("[Filter] Property :  " + property +" NOT RECOGNIZED"); 
         return null;
     }
 

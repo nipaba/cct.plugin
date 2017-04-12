@@ -62,6 +62,7 @@ public class CCT_PluginFrame extends PlugInFrame {
         spinnerModels.initIntensitytSM(minIntensitySpinner, maxIntensitySpinner, filterProperties);
         spinnerModels.initElongationSM(minEnlongSpinner, maxEnlongSpinner, filterProperties);
         spinnerModels.initRoundnesSM(minRoundSpinner, maxRoundSpinner, filterProperties);
+        spinnerModels.initAvgIntSM(minAvgIntSpinner1, maxAvgIntSpinner, filterProperties);
     }
 
     /**
@@ -109,8 +110,11 @@ public class CCT_PluginFrame extends PlugInFrame {
         radioShapeThree = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
         keepOnlyOneCheckBox = new javax.swing.JCheckBox();
-        jButton2 = new javax.swing.JButton();
-        jSlider1 = new javax.swing.JSlider();
+        searchSimilarBtn = new javax.swing.JButton();
+        similarityCoefSlider = new javax.swing.JSlider();
+        minAvgIntSpinner1 = new javax.swing.JSpinner();
+        maxAvgIntSpinner = new javax.swing.JSpinner();
+        avgIntenzityCheck = new javax.swing.JCheckBox();
 
         setBackground(java.awt.Color.lightGray);
         setForeground(java.awt.Color.lightGray);
@@ -410,7 +414,7 @@ public class CCT_PluginFrame extends PlugInFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(maxRoundSpinner, gridBagConstraints);
 
@@ -421,7 +425,7 @@ public class CCT_PluginFrame extends PlugInFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(minRoundSpinner, gridBagConstraints);
 
@@ -433,7 +437,7 @@ public class CCT_PluginFrame extends PlugInFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 16;
+        gridBagConstraints.gridy = 17;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(roundCheck, gridBagConstraints);
 
@@ -501,49 +505,126 @@ public class CCT_PluginFrame extends PlugInFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         add(keepOnlyOneCheckBox, gridBagConstraints);
 
-        jButton2.setText("Search Similar");
+        searchSimilarBtn.setText("Search Similar");
+        searchSimilarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchSimilarBtnActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 25;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(jButton2, gridBagConstraints);
+        add(searchSimilarBtn, gridBagConstraints);
 
-        jSlider1.setMajorTickSpacing(10);
-        jSlider1.setMinimum(5);
-        jSlider1.setMinorTickSpacing(5);
-        jSlider1.setPaintLabels(true);
-        jSlider1.setPaintTicks(true);
-        jSlider1.setSnapToTicks(true);
-        jSlider1.setToolTipText("");
+        similarityCoefSlider.setMajorTickSpacing(10);
+        similarityCoefSlider.setMinimum(5);
+        similarityCoefSlider.setMinorTickSpacing(5);
+        similarityCoefSlider.setPaintLabels(true);
+        similarityCoefSlider.setPaintTicks(true);
+        similarityCoefSlider.setSnapToTicks(true);
+        similarityCoefSlider.setToolTipText("");
+        similarityCoefSlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                similarityCoefSliderStateChanged(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 25;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(jSlider1, gridBagConstraints);
+        add(similarityCoefSlider, gridBagConstraints);
+
+        minAvgIntSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                minAvgIntSpinner1StateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(minAvgIntSpinner1, gridBagConstraints);
+
+        maxAvgIntSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                maxAvgIntSpinnerStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(maxAvgIntSpinner, gridBagConstraints);
+
+        avgIntenzityCheck.setText("AVG intensity");
+        avgIntenzityCheck.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                avgIntenzityCheckStateChanged(evt);
+            }
+        });
+        avgIntenzityCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                avgIntenzityCheckActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(avgIntenzityCheck, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void radioMinTreeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_radioMinTreeStateChanged
-        if (radioMinTree.isSelected()){
+    private void radioMinTreeStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_radioMinTreeStateChanged
+        if (radioMinTree.isSelected()) {
             cct = minTree;
         }
-    }//GEN-LAST:event_radioMinTreeStateChanged
+    }// GEN-LAST:event_radioMinTreeStateChanged
 
-    private void radioMaxTreeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_radioMaxTreeStateChanged
-        if (radioMaxTree.isSelected()){
+    private void radioMaxTreeStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_radioMaxTreeStateChanged
+        if (radioMaxTree.isSelected()) {
             cct = maxTree;
         }
-    }//GEN-LAST:event_radioMaxTreeStateChanged
+    }// GEN-LAST:event_radioMaxTreeStateChanged
 
-    private void radioShapeThreeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_radioShapeThreeStateChanged
-        
-    }//GEN-LAST:event_radioShapeThreeStateChanged
+    private void radioShapeThreeStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_radioShapeThreeStateChanged
 
-    private void elongationCheckStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_elongationCheckStateChanged
+    }// GEN-LAST:event_radioShapeThreeStateChanged
+
+    private void elongationCheckStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_elongationCheckStateChanged
         selectedFilters.put(ComponentProperty.ELONGATION, elongationCheck.isSelected());
-    }//GEN-LAST:event_elongationCheckStateChanged
+    }// GEN-LAST:event_elongationCheckStateChanged
+
+    private void avgIntenzityCheckStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_avgIntenzityCheckStateChanged
+        selectedFilters.put(ComponentProperty.AVG_INTENSITY, avgIntenzityCheck.isSelected());
+    }// GEN-LAST:event_avgIntenzityCheckStateChanged
+
+    private void avgIntenzityCheckActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_avgIntenzityCheckActionPerformed
+        // TODO NOT NEEDED
+    }// GEN-LAST:event_avgIntenzityCheckActionPerformed
+
+    private void maxAvgIntSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_maxAvgIntSpinnerStateChanged
+        int value = (int) spinnerModels.getMaxAvgIntSM().getValue();
+        filterProperties.put(FilterProps.AVG_INT_MAX, value);
+        filterImage();
+    }// GEN-LAST:event_maxAvgIntSpinnerStateChanged
+
+    private void minAvgIntSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_minAvgIntSpinner1StateChanged
+        int value = (int) spinnerModels.getMinAvgIntSM().getValue();
+        filterProperties.put(FilterProps.AVG_INT_MIN, value);
+        filterImage();
+    }// GEN-LAST:event_minAvgIntSpinner1StateChanged
+
+    private void searchSimilarBtnActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_searchSimilarBtnActionPerformed
+        filterSimilar();
+    }// GEN-LAST:event_searchSimilarBtnActionPerformed
+
+    private void similarityCoefSliderStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_similarityCoefSliderStateChanged
+        filterSimilar();
+    }// GEN-LAST:event_similarityCoefSliderStateChanged
 
     private void intensityCheckStateChanged(javax.swing.event.ChangeEvent evt) {// GEN-FIRST:event_intensityCheckStateChanged
         selectedFilters.put(ComponentProperty.INTENSITY, intensityCheck.isSelected());
@@ -653,6 +734,7 @@ public class CCT_PluginFrame extends PlugInFrame {
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox avgIntenzityCheck;
     private javax.swing.JCheckBox elongationCheck;
     private javax.swing.JButton filterButton;
     private javax.swing.ButtonGroup filterGroup;
@@ -660,18 +742,18 @@ public class CCT_PluginFrame extends PlugInFrame {
     private javax.swing.JButton initImgBtn;
     private javax.swing.JCheckBox intensityCheck;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JSlider jSlider1;
     private javax.swing.JCheckBox keepOnlyOneCheckBox;
+    private javax.swing.JSpinner maxAvgIntSpinner;
     private javax.swing.JSpinner maxEnlongSpinner;
     private javax.swing.JSpinner maxHeightSpinner;
     private javax.swing.JSpinner maxIntensitySpinner;
     private javax.swing.JSpinner maxRoundSpinner;
     private javax.swing.JSpinner maxSizeSpinner;
+    private javax.swing.JSpinner minAvgIntSpinner1;
     private javax.swing.JSpinner minEnlongSpinner;
     private javax.swing.JSpinner minHeightSpinner;
     private javax.swing.JSpinner minIntensitySpinner;
@@ -686,6 +768,8 @@ public class CCT_PluginFrame extends PlugInFrame {
     private javax.swing.JRadioButton radioShapeThree;
     private javax.swing.JButton recalcTreeBtn;
     private javax.swing.JCheckBox roundCheck;
+    private javax.swing.JButton searchSimilarBtn;
+    private javax.swing.JSlider similarityCoefSlider;
     private javax.swing.JCheckBox sizeCheck;
     private javax.swing.JLabel title;
     private javax.swing.JLabel titleLabel;
@@ -707,12 +791,18 @@ public class CCT_PluginFrame extends PlugInFrame {
 
             @Override
             public void roiModified(ImagePlus imp, int id) {
-                if (id == RoiListener.MODIFIED) {
+                if (id == RoiListener.MODIFIED || id == RoiListener.MOVED) {
                     System.out.println("Roi modified " + image.getRoi());
 
                     Rectangle bounds = image.getRoi().getBounds();
 
                     searchFor(bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
+                }
+                else if (id == RoiListener.DELETED){
+                    selectedFilters.put(ComponentProperty.LEFT, false);
+                    selectedFilters.put(ComponentProperty.RIGHT, false);
+                    selectedFilters.put(ComponentProperty.UP, false);
+                    selectedFilters.put(ComponentProperty.DOWN, false);
                 }
 
             }
@@ -758,7 +848,7 @@ public class CCT_PluginFrame extends PlugInFrame {
 
         painter = new Painter(image, orig);
 
-        //default cct 
+        // default cct
         cct = maxTree;
         radioMaxTree.setSelected(true);
         keepOnlyOne = keepOnlyOneCheckBox.isSelected();
@@ -778,21 +868,31 @@ public class CCT_PluginFrame extends PlugInFrame {
         pixelsCount.setText("");
     }
 
-    private void filterImage() {
-        
+    private void filterSimilar(){
+             
+        boolean similar = true;
         if (radioShapeThree.isSelected()) {
-            painter.filterShapeTreeImage(shapeTree, filterProperties, selectedFilters, keepOnlyOne);
+            painter.filterShapeTreeImage(shapeTree, filterProperties, selectedFilters, keepOnlyOne,similar,similarityCoefSlider.getValue());
         } else {
-            painter.filterCCTImage(cct, filterProperties, selectedFilters, keepOnlyOne);
+            painter.filterCCTImage(cct, filterProperties, selectedFilters, keepOnlyOne,similar);
+        }
+    }
+
+    private void filterImage() {
+        boolean similar = false;
+        if (radioShapeThree.isSelected()) {
+            painter.filterShapeTreeImage(shapeTree, filterProperties, selectedFilters, keepOnlyOne,similar,0);
+        } else {
+            painter.filterCCTImage(cct, filterProperties, selectedFilters, keepOnlyOne,similar);
         }
     }
 
     private void searchFor(double minX, double minY, double maxX, double maxY) {
 
         filterProperties.put(FilterProps.LEFT, Double.valueOf(minY).intValue());
-        filterProperties.put(FilterProps.RIGHT, Double.valueOf(maxY).intValue()-1);
+        filterProperties.put(FilterProps.RIGHT, Double.valueOf(maxY).intValue() - 1);
         filterProperties.put(FilterProps.UP, Double.valueOf(minX).intValue());
-        filterProperties.put(FilterProps.BOTTOM, Double.valueOf(maxX).intValue()-1);
+        filterProperties.put(FilterProps.BOTTOM, Double.valueOf(maxX).intValue() - 1);
 
         filterProperties.put(FilterProps.MAX, Integer.MAX_VALUE);
         filterProperties.put(FilterProps.MIN, Integer.MIN_VALUE);
